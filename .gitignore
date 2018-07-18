@@ -236,3 +236,5 @@ GitHub.sublime-settings
 # End of https://www.gitignore.io/api/c,c++,cmake,python,sublimetext,visualstudiocode
 
 autom4te.cache
+config.h
+.vscode
