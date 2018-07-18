@@ -10,12 +10,14 @@ Installation
 From pip:
 
 .. code:: bash
+
     pip install pyopenfst
 
 
 From conda:
 
 .. code:: bash
+
     conda install pyopenfst
 
 
@@ -30,4 +32,4 @@ OpenFST project home
 =======================
 
 The OpenFst library is not develop here! See `OpenFst project home <http://openfst.org/>`_ or the original
-`README <<https://github.com/pytorch/ignite/tree/master/RAEDME>`_ for more information
+`README <https://github.com/pytorch/ignite/tree/master/RAEDME>`_ for more information
