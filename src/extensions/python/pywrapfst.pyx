@@ -1,4 +1,5 @@
-#cython: nonecheck=True, c_string_type=unicode, c_string_encoding=utf8
+# distutils: language = c++
+# cython: nonecheck=True, c_string_type=unicode, c_string_encoding=utf8
 # See www.openfst.org for extensive documentation on this weighted
 # finite-state transducer library.
 
