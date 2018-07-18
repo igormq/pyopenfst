@@ -88,12 +88,12 @@ class build_ext(build_ext_orig):
 
         # Create symbolic link to config.h
         if (cwd / config_h).exists():
-            os.unlink(cwd / config_h)
-        os.symlink(build_temp / config_h, cwd / config_h)
+            os.unlink(str(cwd / config_h))
+        os.symlink(str(build_temp / config_h), str(cwd / config_h))
 
         if (cwd / inc_fst_config_h).exists():
-            os.unlink(cwd / inc_fst_config_h)
-        os.symlink(build_temp / inc_fst_config_h, cwd / inc_fst_config_h)
+            os.unlink(str(cwd / inc_fst_config_h))
+        os.symlink(str(build_temp / inc_fst_config_h), str(cwd / inc_fst_config_h))
 
         if not self.dry_run:
             self.spawn(['make', '-s', '-j', '4'])
@@ -165,5 +165,4 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ),
-    keywords='fst finite state transducer wfst'
-)
+    keywords='fst finite state transducer wfst')

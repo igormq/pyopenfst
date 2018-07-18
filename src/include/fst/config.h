@@ -1,1 +1,0 @@
-/home/igor.quintanilha/repos/openfst/build/temp.linux-x86_64-3.6/src/include/fst/config.h
