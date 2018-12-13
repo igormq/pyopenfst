@@ -1,12 +1,19 @@
+import glob
 import os
 import pathlib
 import platform
 import re
+import shutil
 import sys
+from distutils.dir_util import copy_tree
 from shutil import rmtree
 
 from setuptools import Command, Extension, setup
 from setuptools.command.build_ext import build_ext as build_ext_orig
+
+IS_WINDOWS = (platform.system() == 'Windows')
+IS_DARWIN = (platform.system() == 'Darwin')
+IS_LINUX = (platform.system() == 'Linux')
 
 
 def read(*names, **kwargs):
@@ -20,6 +27,15 @@ def find_version(*file_paths):
     if version_match:
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
+
+
+def make_relative_rpath(path):
+    if IS_DARWIN:
+        return '-Wl,-rpath,@loader_path/' + path
+    elif IS_WINDOWS:
+        return ''
+    else:
+        return '-Wl,-rpath,$ORIGIN/' + path
 
 
 readme = read('README.rst')
@@ -65,6 +81,7 @@ class build_ext(build_ext_orig):
     def run(self):
         for ext in self.extensions:
             self.build_make(ext)
+
         super().run()
 
     def build_make(self, ext):
@@ -104,6 +121,10 @@ class build_ext(build_ext_orig):
 
         os.chdir(str(cwd))
 
+        local_temp = (pathlib.Path(self.build_temp) / 'local').absolute() / 'lib'
+        build_lib = pathlib.Path(self.build_lib).absolute() / 'openfst' / 'lib'
+        copy_tree(str(local_temp), str(build_lib))
+
 
 install_requires = []
 
@@ -112,9 +133,9 @@ extra_compile_args, libraries = [], []
 extra_compile_args += ['-O3', '-DNDEBUG', '-std=c++11']
 extra_compile_args += ['-fno-exceptions', '-funsigned-char', '-fexceptions']
 
-if platform.system() == 'Linux':
+if IS_LINUX:
     libraries += ['stdc++', 'rt']
-elif platform.system() == 'Darwin':
+elif IS_DARWIN:
     libraries += ['stdc++']
 
 # OpenFST required libraries
@@ -138,7 +159,8 @@ ext_modules = [
         include_dirs=['.'],
         libraries=libraries,
         language='c++',
-        extra_compile_args=extra_compile_args)
+        extra_compile_args=extra_compile_args,
+        extra_link_args=[make_relative_rpath('lib')])
 ]
 
 if USE_CYTHON:
@@ -157,8 +179,11 @@ setup(
     long_description=readme,
     package_dir={'': 'src/extensions/python'},
     packages=['openfst'],
-    cmdclass={'build_ext': build_ext,
-              'upload': UploadCommand},
+    package_data={'': ['lib/*.so*', 'lib/*.dylib*', 'lib/*.dll', 'lib/*.lib']},
+    cmdclass={
+        'build_ext': build_ext,
+        'upload': UploadCommand
+    },
     zip_safe=False,
     classifiers=(
         "Programming Language :: Python :: 3",

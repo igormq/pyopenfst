@@ -238,3 +238,4 @@ GitHub.sublime-settings
 autom4te.cache
 config.h
 .vscode
+Makefile.in
